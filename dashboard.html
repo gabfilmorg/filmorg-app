@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - filmORG</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="base.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="sidebar-overlay"></div>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>filmORG</h2>
+        </div>
+        <nav class="menu">
+            <a href="dashboard.html" class="menu-item active">
+                <i class="ri-dashboard-line"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="projetos.html" class="menu-item">
+                <i class="ri-movie-line"></i>
+                <span>Projetos</span>
+            </a>
+            <a href="roteiro.html" class="menu-item">
+                <i class="ri-file-text-line"></i>
+                <span>Roteiro</span>
+            </a>
+            <a href="equipe.html" class="menu-item">
+                <i class="ri-team-line"></i>
+                <span>Equipe</span>
+            </a>
+            <a href="equipamentos.html" class="menu-item">
+                <i class="ri-camera-line"></i>
+                <span>Equipamentos</span>
+            </a>
+            <a href="analytics.html" class="menu-item">
+                <i class="ri-bar-chart-box-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="agenda.html" class="menu-item">
+                <i class="ri-calendar-line"></i>
+                <span>Agenda</span>
+            </a>
+            <a href="orcamento.html" class="menu-item">
+                <i class="ri-money-dollar-circle-line"></i>
+                <span>Orçamento</span>
+            </a>
+            <a href="configuracoes.html" class="menu-item">
+                <i class="ri-settings-line"></i>
+                <span>Configurações</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="header">
+            <button class="menu-toggle">
+                <i class="ri-menu-line"></i>
+            </button>
+            <div class="user-info">
+                <span>Olá, Usuário</span>
+                <i class="ri-user-line"></i>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="page-header">
+                <h1>Dashboard</h1>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Projetos Ativos</h3>
+                        <span class="badge">5</span>
+                    </div>
+                    <div class="card-content">
+                        <canvas id="projectsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Equipamentos</h3>
+                        <span class="badge">15</span>
+                    </div>
+                    <div class="card-content">
+                        <canvas id="equipmentChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Próximos Eventos</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="event-list">
+                            <div class="event-item">
+                                <div class="event-date">15 Mar</div>
+                                <div class="event-info">
+                                    <h4>Filmagem Externa</h4>
+                                    <p>Projeto: Documentário Verde</p>
+                                </div>
+                            </div>
+                            <div class="event-item">
+                                <div class="event-date">17 Mar</div>
+                                <div class="event-info">
+                                    <h4>Reunião de Produção</h4>
+                                    <p>Projeto: Comercial XYZ</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Orçamento Mensal</h3>
+                    </div>
+                    <div class="card-content">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="layout.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+        });
+
+        function initCharts() {
+            // Projetos Chart
+            const projectsCtx = document.getElementById('projectsChart').getContext('2d');
+            new Chart(projectsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Em Andamento', 'Planejamento', 'Concluído'],
+                    datasets: [{
+                        data: [3, 2, 4],
+                        backgroundColor: ['#4CAF50', '#2196F3', '#9C27B0']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Equipamentos Chart
+            const equipmentCtx = document.getElementById('equipmentChart').getContext('2d');
+            new Chart(equipmentCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Câmeras', 'Lentes', 'Áudio', 'Iluminação'],
+                    datasets: [{
+                        label: 'Em Uso',
+                        data: [3, 5, 2, 4],
+                        backgroundColor: '#2196F3'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Orçamento Chart
+            const budgetCtx = document.getElementById('budgetChart').getContext('2d');
+            new Chart(budgetCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                    datasets: [{
+                        label: 'Previsto',
+                        data: [30000, 35000, 32000, 38000, 35000, 40000],
+                        borderColor: '#4CAF50',
+                        fill: false
+                    }, {
+                        label: 'Realizado',
+                        data: [28000, 32000, 31000, 35000, 33000, 38000],
+                        borderColor: '#2196F3',
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
