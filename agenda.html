@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda - filmORG</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="base.css" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar-overlay"></div>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>filmORG</h2>
+        </div>
+        <nav class="menu">
+            <a href="dashboard.html" class="menu-item">
+                <i class="ri-dashboard-line"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="projetos.html" class="menu-item">
+                <i class="ri-movie-line"></i>
+                <span>Projetos</span>
+            </a>
+            <a href="roteiro.html" class="menu-item">
+                <i class="ri-file-text-line"></i>
+                <span>Roteiro</span>
+            </a>
+            <a href="equipe.html" class="menu-item">
+                <i class="ri-team-line"></i>
+                <span>Equipe</span>
+            </a>
+            <a href="equipamentos.html" class="menu-item">
+                <i class="ri-camera-line"></i>
+                <span>Equipamentos</span>
+            </a>
+            <a href="analytics.html" class="menu-item">
+                <i class="ri-bar-chart-box-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="agenda.html" class="menu-item active">
+                <i class="ri-calendar-line"></i>
+                <span>Agenda</span>
+            </a>
+            <a href="orcamento.html" class="menu-item">
+                <i class="ri-money-dollar-circle-line"></i>
+                <span>Orçamento</span>
+            </a>
+            <a href="configuracoes.html" class="menu-item">
+                <i class="ri-settings-line"></i>
+                <span>Configurações</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="header">
+            <button class="menu-toggle">
+                <i class="ri-menu-line"></i>
+            </button>
+            <div class="user-info">
+                <span>Olá, Usuário</span>
+                <i class="ri-user-line"></i>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="page-header">
+                <h1>Agenda</h1>
+                <button class="btn primary" onclick="openNewEventModal()">
+                    <i class="ri-add-line"></i>
+                    Novo Evento
+                </button>
+            </div>
+
+            <div class="calendar-controls">
+                <div class="calendar-nav">
+                    <button class="btn icon" onclick="previousMonth()">
+                        <i class="ri-arrow-left-s-line"></i>
+                    </button>
+                    <h2 id="currentMonth">Março 2024</h2>
+                    <button class="btn icon" onclick="nextMonth()">
+                        <i class="ri-arrow-right-s-line"></i>
+                    </button>
+                </div>
+                <div class="view-options">
+                    <button class="btn secondary active" onclick="switchView('month')">Mês</button>
+                    <button class="btn secondary" onclick="switchView('week')">Semana</button>
+                    <button class="btn secondary" onclick="switchView('day')">Dia</button>
+                </div>
+            </div>
+
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Calendário será carregado dinamicamente aqui -->
+            </div>
+
+            <div class="upcoming-events">
+                <h3>Próximos Eventos</h3>
+                <div class="event-list" id="upcomingEvents">
+                    <!-- Eventos próximos serão carregados dinamicamente aqui -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Novo Evento -->
+    <div class="modal" id="newEventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Novo Evento</h2>
+                <button class="close-btn" onclick="closeNewEventModal()">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="newEventForm">
+                    <div class="form-group">
+                        <label for="eventTitle">Título</label>
+                        <input type="text" id="eventTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventProject">Projeto</label>
+                        <select id="eventProject" required>
+                            <option value="doc_verde">Documentário Verde</option>
+                            <option value="com_xyz">Comercial XYZ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventType">Tipo</label>
+                        <select id="eventType" required>
+                            <option value="filmagem">Filmagem</option>
+                            <option value="reuniao">Reunião</option>
+                            <option value="edicao">Edição</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventDate">Data</label>
+                        <input type="date" id="eventDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventTime">Horário</label>
+                        <input type="time" id="eventTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventDuration">Duração (horas)</label>
+                        <input type="number" id="eventDuration" min="0.5" step="0.5" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="eventDescription">Descrição</label>
+                        <textarea id="eventDescription" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeNewEventModal()">Cancelar</button>
+                <button class="btn primary" onclick="saveEvent()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="layout.js" defer></script>
+    <script>
+        // Dados simulados de eventos
+        const events = [
+            {
+                id: 1,
+                titulo: "Filmagem Externa",
+                projeto: "doc_verde",
+                tipo: "filmagem",
+                data: "2024-03-15",
+                horario: "09:00",
+                duracao: 4,
+                descricao: "Filmagem de cenas externas no parque"
+            },
+            {
+                id: 2,
+                titulo: "Reunião de Produção",
+                projeto: "com_xyz",
+                tipo: "reuniao",
+                data: "2024-03-17",
+                horario: "14:00",
+                duracao: 2,
+                descricao: "Alinhamento com equipe de produção"
+            },
+            {
+                id: 3,
+                titulo: "Edição Final",
+                projeto: "doc_verde",
+                tipo: "edicao",
+                data: "2024-03-20",
+                horario: "10:00",
+                duracao: 6,
+                descricao: "Finalização da edição do documentário"
+            }
+        ];
+
+        function loadCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+
+            // Implementar lógica do calendário
+            // Este é um exemplo simplificado
+            const daysInMonth = 31;
+            const firstDay = new Date(2024, 2, 1).getDay(); // Março 2024
+
+            // Cabeçalho dos dias da semana
+            const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            weekDays.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-header';
+                dayHeader.textContent = day;
+                grid.appendChild(dayHeader);
+            });
+
+            // Dias vazios antes do primeiro dia
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day empty';
+                grid.appendChild(emptyDay);
+            }
+
+            // Dias do mês
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'calendar-day';
+                dayCell.innerHTML = `
+                    <span class="day-number">${day}</span>
+                    <div class="day-events">
+                        ${getEventsForDay(2024, 3, day)}
+                    </div>
+                `;
+                grid.appendChild(dayCell);
+            }
+        }
+
+        function getEventsForDay(year, month, day) {
+            const dateStr = `2024-03-${day.toString().padStart(2, '0')}`;
+            const dayEvents = events.filter(event => event.data === dateStr);
+            
+            return dayEvents.map(event => `
+                <div class="calendar-event ${event.tipo}" onclick="viewEvent(${event.id})">
+                    <span class="event-time">${event.horario}</span>
+                    <span class="event-title">${event.titulo}</span>
+                </div>
+            `).join('');
+        }
+
+        function loadUpcomingEvents() {
+            const list = document.getElementById('upcomingEvents');
+            list.innerHTML = '';
+
+            events.sort((a, b) => new Date(a.data + 'T' + a.horario) - new Date(b.data + 'T' + b.horario));
+
+            events.forEach(event => {
+                const eventItem = document.createElement('div');
+                eventItem.className = `event-item ${event.tipo}`;
+                eventItem.innerHTML = `
+                    <div class="event-date">
+                        <span class="date">${formatDate(event.data)}</span>
+                        <span class="time">${event.horario}</span>
+                    </div>
+                    <div class="event-info">
+                        <h4>${event.titulo}</h4>
+                        <p>${formatProject(event.projeto)}</p>
+                    </div>
+                    <div class="event-actions">
+                        <button class="btn icon" onclick="editEvent(${event.id})">
+                            <i class="ri-edit-line"></i>
+                        </button>
+                        <button class="btn icon" onclick="deleteEvent(${event.id})">
+                            <i class="ri-delete-bin-line"></i>
+                        </button>
+                    </div>
+                `;
+                list.appendChild(eventItem);
+            });
+        }
+
+        function formatDate(date) {
+            return new Date(date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        }
+
+        function formatProject(project) {
+            const projectMap = {
+                'doc_verde': 'Documentário Verde',
+                'com_xyz': 'Comercial XYZ'
+            };
+            return projectMap[project] || project;
+        }
+
+        function switchView(view) {
+            // Implementar mudança de visualização
+            console.log('Mudando para visualização:', view);
+        }
+
+        function previousMonth() {
+            // Implementar navegação para mês anterior
+            console.log('Mês anterior');
+        }
+
+        function nextMonth() {
+            // Implementar navegação para próximo mês
+            console.log('Próximo mês');
+        }
+
+        function openNewEventModal() {
+            document.getElementById('newEventModal').classList.add('show');
+        }
+
+        function closeNewEventModal() {
+            document.getElementById('newEventModal').classList.remove('show');
+            document.getElementById('newEventForm').reset();
+        }
+
+        function saveEvent() {
+            // Implementar salvamento do evento
+            closeNewEventModal();
+            loadCalendar();
+            loadUpcomingEvents();
+        }
+
+        function editEvent(id) {
+            // Implementar edição do evento
+            console.log('Editar evento:', id);
+        }
+
+        function deleteEvent(id) {
+            // Implementar exclusão do evento
+            console.log('Excluir evento:', id);
+        }
+
+        function viewEvent(id) {
+            // Implementar visualização detalhada do evento
+            console.log('Ver evento:', id);
+        }
+
+        // Carregar calendário e eventos ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCalendar();
+            loadUpcomingEvents();
+        });
+    </script>
+</body>
+</html>
