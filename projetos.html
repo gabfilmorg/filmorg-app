@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projetos - filmORG</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="base.css" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar-overlay"></div>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>filmORG</h2>
+        </div>
+        <nav class="menu">
+            <a href="dashboard.html" class="menu-item">
+                <i class="ri-dashboard-line"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="projetos.html" class="menu-item active">
+                <i class="ri-movie-line"></i>
+                <span>Projetos</span>
+            </a>
+            <a href="roteiro.html" class="menu-item">
+                <i class="ri-file-text-line"></i>
+                <span>Roteiro</span>
+            </a>
+            <a href="equipe.html" class="menu-item">
+                <i class="ri-team-line"></i>
+                <span>Equipe</span>
+            </a>
+            <a href="equipamentos.html" class="menu-item">
+                <i class="ri-camera-line"></i>
+                <span>Equipamentos</span>
+            </a>
+            <a href="analytics.html" class="menu-item">
+                <i class="ri-bar-chart-box-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="agenda.html" class="menu-item">
+                <i class="ri-calendar-line"></i>
+                <span>Agenda</span>
+            </a>
+            <a href="orcamento.html" class="menu-item">
+                <i class="ri-money-dollar-circle-line"></i>
+                <span>Orçamento</span>
+            </a>
+            <a href="configuracoes.html" class="menu-item">
+                <i class="ri-settings-line"></i>
+                <span>Configurações</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="header">
+            <button class="menu-toggle">
+                <i class="ri-menu-line"></i>
+            </button>
+            <div class="user-info">
+                <span>Olá, Usuário</span>
+                <i class="ri-user-line"></i>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="page-header">
+                <h1>Projetos</h1>
+                <button class="btn primary" onclick="openNewProjectModal()">
+                    <i class="ri-add-line"></i>
+                    Novo Projeto
+                </button>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Status:</label>
+                    <select id="statusFilter" onchange="filterProjects()">
+                        <option value="todos">Todos</option>
+                        <option value="em_andamento">Em Andamento</option>
+                        <option value="planejamento">Planejamento</option>
+                        <option value="concluido">Concluído</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Ordenar por:</label>
+                    <select id="sortBy" onchange="filterProjects()">
+                        <option value="data">Data</option>
+                        <option value="nome">Nome</option>
+                        <option value="status">Status</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="projects-grid" id="projectsGrid">
+                <!-- Projetos serão carregados dinamicamente aqui -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Novo Projeto -->
+    <div class="modal" id="newProjectModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Novo Projeto</h2>
+                <button class="close-btn" onclick="closeNewProjectModal()">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="newProjectForm">
+                    <div class="form-group">
+                        <label for="projectName">Nome do Projeto</label>
+                        <input type="text" id="projectName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectType">Tipo</label>
+                        <select id="projectType" required>
+                            <option value="filme">Filme</option>
+                            <option value="comercial">Comercial</option>
+                            <option value="documentario">Documentário</option>
+                            <option value="serie">Série</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectStatus">Status</label>
+                        <select id="projectStatus" required>
+                            <option value="planejamento">Planejamento</option>
+                            <option value="em_andamento">Em Andamento</option>
+                            <option value="concluido">Concluído</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectStart">Data de Início</label>
+                        <input type="date" id="projectStart" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectEnd">Data de Término Prevista</label>
+                        <input type="date" id="projectEnd" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectDescription">Descrição</label>
+                        <textarea id="projectDescription" rows="4"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeNewProjectModal()">Cancelar</button>
+                <button class="btn primary" onclick="saveProject()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="layout.js" defer></script>
+    <script>
+        // Dados simulados de projetos
+        const projects = [
+            {
+                id: 1,
+                nome: "Documentário Verde",
+                tipo: "documentario",
+                status: "em_andamento",
+                inicio: "2024-03-01",
+                fim: "2024-06-30",
+                descricao: "Documentário sobre sustentabilidade"
+            },
+            {
+                id: 2,
+                nome: "Comercial XYZ",
+                tipo: "comercial",
+                status: "planejamento",
+                inicio: "2024-04-01",
+                fim: "2024-04-15",
+                descricao: "Comercial para produto XYZ"
+            },
+            {
+                id: 3,
+                nome: "Curta-metragem Sonhos",
+                tipo: "filme",
+                status: "concluido",
+                inicio: "2024-01-01",
+                fim: "2024-02-28",
+                descricao: "Curta-metragem sobre sonhos"
+            }
+        ];
+
+        function loadProjects() {
+            const grid = document.getElementById('projectsGrid');
+            grid.innerHTML = '';
+
+            projects.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'card project-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <h3>${project.nome}</h3>
+                        <span class="badge ${project.status}">${formatStatus(project.status)}</span>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Tipo:</strong> ${formatType(project.tipo)}</p>
+                        <p><strong>Início:</strong> ${formatDate(project.inicio)}</p>
+                        <p><strong>Término:</strong> ${formatDate(project.fim)}</p>
+                        <p>${project.descricao}</p>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn secondary" onclick="editProject(${project.id})">
+                            <i class="ri-edit-line"></i>
+                            Editar
+                        </button>
+                        <button class="btn primary" onclick="viewProject(${project.id})">
+                            <i class="ri-eye-line"></i>
+                            Ver Detalhes
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function formatStatus(status) {
+            const statusMap = {
+                'em_andamento': 'Em Andamento',
+                'planejamento': 'Planejamento',
+                'concluido': 'Concluído'
+            };
+            return statusMap[status] || status;
+        }
+
+        function formatType(type) {
+            const typeMap = {
+                'filme': 'Filme',
+                'comercial': 'Comercial',
+                'documentario': 'Documentário',
+                'serie': 'Série'
+            };
+            return typeMap[type] || type;
+        }
+
+        function formatDate(date) {
+            return new Date(date).toLocaleDateString('pt-BR');
+        }
+
+        function filterProjects() {
+            // Implementar filtros
+            loadProjects();
+        }
+
+        function openNewProjectModal() {
+            document.getElementById('newProjectModal').classList.add('show');
+        }
+
+        function closeNewProjectModal() {
+            document.getElementById('newProjectModal').classList.remove('show');
+            document.getElementById('newProjectForm').reset();
+        }
+
+        function saveProject() {
+            // Implementar salvamento do projeto
+            closeNewProjectModal();
+            loadProjects();
+        }
+
+        function editProject(id) {
+            // Implementar edição do projeto
+            console.log('Editar projeto:', id);
+        }
+
+        function viewProject(id) {
+            // Implementar visualização detalhada do projeto
+            console.log('Ver projeto:', id);
+        }
+
+        // Carregar projetos ao iniciar
+        document.addEventListener('DOMContentLoaded', loadProjects);
+    </script>
+</body>
+</html>
