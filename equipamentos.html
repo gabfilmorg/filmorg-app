@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipamentos - filmORG</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="base.css" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar-overlay"></div>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>filmORG</h2>
+        </div>
+        <nav class="menu">
+            <a href="dashboard.html" class="menu-item">
+                <i class="ri-dashboard-line"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="projetos.html" class="menu-item">
+                <i class="ri-movie-line"></i>
+                <span>Projetos</span>
+            </a>
+            <a href="roteiro.html" class="menu-item">
+                <i class="ri-file-text-line"></i>
+                <span>Roteiro</span>
+            </a>
+            <a href="equipe.html" class="menu-item">
+                <i class="ri-team-line"></i>
+                <span>Equipe</span>
+            </a>
+            <a href="equipamentos.html" class="menu-item active">
+                <i class="ri-camera-line"></i>
+                <span>Equipamentos</span>
+            </a>
+            <a href="analytics.html" class="menu-item">
+                <i class="ri-bar-chart-box-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="agenda.html" class="menu-item">
+                <i class="ri-calendar-line"></i>
+                <span>Agenda</span>
+            </a>
+            <a href="orcamento.html" class="menu-item">
+                <i class="ri-money-dollar-circle-line"></i>
+                <span>Orçamento</span>
+            </a>
+            <a href="configuracoes.html" class="menu-item">
+                <i class="ri-settings-line"></i>
+                <span>Configurações</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="header">
+            <button class="menu-toggle">
+                <i class="ri-menu-line"></i>
+            </button>
+            <div class="user-info">
+                <span>Olá, Usuário</span>
+                <i class="ri-user-line"></i>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="page-header">
+                <h1>Equipamentos</h1>
+                <button class="btn primary" onclick="openNewEquipmentModal()">
+                    <i class="ri-add-line"></i>
+                    Novo Equipamento
+                </button>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Tipo:</label>
+                    <select id="typeFilter" onchange="filterEquipment()">
+                        <option value="todos">Todos</option>
+                        <option value="camera">Câmera</option>
+                        <option value="lente">Lente</option>
+                        <option value="audio">Áudio</option>
+                        <option value="iluminacao">Iluminação</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Status:</label>
+                    <select id="statusFilter" onchange="filterEquipment()">
+                        <option value="todos">Todos</option>
+                        <option value="disponivel">Disponível</option>
+                        <option value="em_uso">Em Uso</option>
+                        <option value="manutencao">Manutenção</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="equipment-grid" id="equipmentGrid">
+                <!-- Equipamentos serão carregados dinamicamente aqui -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Novo Equipamento -->
+    <div class="modal" id="newEquipmentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Novo Equipamento</h2>
+                <button class="close-btn" onclick="closeNewEquipmentModal()">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="newEquipmentForm">
+                    <div class="form-group">
+                        <label for="equipmentName">Nome</label>
+                        <input type="text" id="equipmentName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="equipmentType">Tipo</label>
+                        <select id="equipmentType" required>
+                            <option value="camera">Câmera</option>
+                            <option value="lente">Lente</option>
+                            <option value="audio">Áudio</option>
+                            <option value="iluminacao">Iluminação</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="equipmentSerial">Número de Série</label>
+                        <input type="text" id="equipmentSerial">
+                    </div>
+                    <div class="form-group">
+                        <label for="equipmentStatus">Status</label>
+                        <select id="equipmentStatus" required>
+                            <option value="disponivel">Disponível</option>
+                            <option value="em_uso">Em Uso</option>
+                            <option value="manutencao">Manutenção</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="equipmentProject">Projeto Atual</label>
+                        <select id="equipmentProject">
+                            <option value="">Nenhum</option>
+                            <option value="doc_verde">Documentário Verde</option>
+                            <option value="com_xyz">Comercial XYZ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="equipmentNotes">Observações</label>
+                        <textarea id="equipmentNotes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeNewEquipmentModal()">Cancelar</button>
+                <button class="btn primary" onclick="saveEquipment()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="layout.js" defer></script>
+    <script>
+        // Dados simulados de equipamentos
+        const equipment = [
+            {
+                id: 1,
+                nome: "Sony FX6",
+                tipo: "camera",
+                serial: "FX6001",
+                status: "em_uso",
+                projeto: "doc_verde",
+                observacoes: "Câmera principal para documentário"
+            },
+            {
+                id: 2,
+                nome: "Canon 24-70mm f/2.8",
+                tipo: "lente",
+                serial: "CN2470001",
+                status: "disponivel",
+                projeto: null,
+                observacoes: "Lente zoom padrão"
+            },
+            {
+                id: 3,
+                nome: "Sennheiser MKH 416",
+                tipo: "audio",
+                serial: "SN416001",
+                status: "em_uso",
+                projeto: "com_xyz",
+                observacoes: "Microfone shotgun principal"
+            }
+        ];
+
+        function loadEquipment() {
+            const grid = document.getElementById('equipmentGrid');
+            grid.innerHTML = '';
+
+            equipment.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card equipment-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <h3>${item.nome}</h3>
+                        <span class="badge ${item.status}">${formatStatus(item.status)}</span>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Tipo:</strong> ${formatType(item.tipo)}</p>
+                        <p><strong>Número de Série:</strong> ${item.serial}</p>
+                        <p><strong>Projeto:</strong> ${formatProject(item.projeto)}</p>
+                        <p class="equipment-notes">${item.observacoes}</p>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn secondary" onclick="editEquipment(${item.id})">
+                            <i class="ri-edit-line"></i>
+                            Editar
+                        </button>
+                        <button class="btn primary" onclick="viewEquipmentHistory(${item.id})">
+                            <i class="ri-history-line"></i>
+                            Histórico
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function formatStatus(status) {
+            const statusMap = {
+                'disponivel': 'Disponível',
+                'em_uso': 'Em Uso',
+                'manutencao': 'Manutenção'
+            };
+            return statusMap[status] || status;
+        }
+
+        function formatType(type) {
+            const typeMap = {
+                'camera': 'Câmera',
+                'lente': 'Lente',
+                'audio': 'Áudio',
+                'iluminacao': 'Iluminação'
+            };
+            return typeMap[type] || type;
+        }
+
+        function formatProject(project) {
+            if (!project) return 'Nenhum';
+            const projectMap = {
+                'doc_verde': 'Documentário Verde',
+                'com_xyz': 'Comercial XYZ'
+            };
+            return projectMap[project] || project;
+        }
+
+        function filterEquipment() {
+            // Implementar filtros
+            loadEquipment();
+        }
+
+        function openNewEquipmentModal() {
+            document.getElementById('newEquipmentModal').classList.add('show');
+        }
+
+        function closeNewEquipmentModal() {
+            document.getElementById('newEquipmentModal').classList.remove('show');
+            document.getElementById('newEquipmentForm').reset();
+        }
+
+        function saveEquipment() {
+            // Implementar salvamento do equipamento
+            closeNewEquipmentModal();
+            loadEquipment();
+        }
+
+        function editEquipment(id) {
+            // Implementar edição do equipamento
+            console.log('Editar equipamento:', id);
+        }
+
+        function viewEquipmentHistory(id) {
+            // Implementar visualização do histórico do equipamento
+            console.log('Ver histórico do equipamento:', id);
+        }
+
+        // Carregar equipamentos ao iniciar
+        document.addEventListener('DOMContentLoaded', loadEquipment);
+    </script>
+</body>
+</html>
