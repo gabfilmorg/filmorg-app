@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roteiro - filmORG</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="base.css" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar-overlay"></div>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>filmORG</h2>
+        </div>
+        <nav class="menu">
+            <a href="dashboard.html" class="menu-item">
+                <i class="ri-dashboard-line"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="projetos.html" class="menu-item">
+                <i class="ri-movie-line"></i>
+                <span>Projetos</span>
+            </a>
+            <a href="roteiro.html" class="menu-item active">
+                <i class="ri-file-text-line"></i>
+                <span>Roteiro</span>
+            </a>
+            <a href="equipe.html" class="menu-item">
+                <i class="ri-team-line"></i>
+                <span>Equipe</span>
+            </a>
+            <a href="equipamentos.html" class="menu-item">
+                <i class="ri-camera-line"></i>
+                <span>Equipamentos</span>
+            </a>
+            <a href="analytics.html" class="menu-item">
+                <i class="ri-bar-chart-box-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="agenda.html" class="menu-item">
+                <i class="ri-calendar-line"></i>
+                <span>Agenda</span>
+            </a>
+            <a href="orcamento.html" class="menu-item">
+                <i class="ri-money-dollar-circle-line"></i>
+                <span>Orçamento</span>
+            </a>
+            <a href="configuracoes.html" class="menu-item">
+                <i class="ri-settings-line"></i>
+                <span>Configurações</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="header">
+            <button class="menu-toggle">
+                <i class="ri-menu-line"></i>
+            </button>
+            <div class="user-info">
+                <span>Olá, Usuário</span>
+                <i class="ri-user-line"></i>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="page-header">
+                <h1>Roteiro</h1>
+                <div class="header-actions">
+                    <button class="btn secondary" onclick="importScript()">
+                        <i class="ri-upload-line"></i>
+                        Importar
+                    </button>
+                    <button class="btn primary" onclick="openNewSceneModal()">
+                        <i class="ri-add-line"></i>
+                        Nova Cena
+                    </button>
+                </div>
+            </div>
+
+            <div class="script-container">
+                <div class="script-sidebar">
+                    <div class="script-info">
+                        <h3>Documentário Verde</h3>
+                        <p>Versão: 1.2</p>
+                        <p>Última atualização: 10/03/2024</p>
+                    </div>
+                    <div class="script-navigation">
+                        <h4>Cenas</h4>
+                        <div class="scene-list" id="sceneList">
+                            <!-- Lista de cenas será carregada dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="script-editor">
+                    <div class="editor-toolbar">
+                        <select id="sceneStatus">
+                            <option value="nao_iniciada">Não Iniciada</option>
+                            <option value="em_producao">Em Produção</option>
+                            <option value="concluida">Concluída</option>
+                        </select>
+                        <button class="btn icon" onclick="saveScene()">
+                            <i class="ri-save-line"></i>
+                        </button>
+                        <button class="btn icon" onclick="exportScene()">
+                            <i class="ri-download-line"></i>
+                        </button>
+                    </div>
+                    <div class="editor-content" id="editorContent">
+                        <!-- Conteúdo do editor será carregado dinamicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Nova Cena -->
+    <div class="modal" id="newSceneModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nova Cena</h2>
+                <button class="close-btn" onclick="closeNewSceneModal()">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="newSceneForm">
+                    <div class="form-group">
+                        <label for="sceneNumber">Número da Cena</label>
+                        <input type="text" id="sceneNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sceneTitle">Título</label>
+                        <input type="text" id="sceneTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sceneLocation">Localização</label>
+                        <input type="text" id="sceneLocation">
+                    </div>
+                    <div class="form-group">
+                        <label for="sceneTime">Horário</label>
+                        <select id="sceneTime">
+                            <option value="dia">Dia</option>
+                            <option value="noite">Noite</option>
+                            <option value="amanhecer">Amanhecer</option>
+                            <option value="anoitecer">Anoitecer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sceneDescription">Descrição</label>
+                        <textarea id="sceneDescription" rows="4"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeNewSceneModal()">Cancelar</button>
+                <button class="btn primary" onclick="saveNewScene()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="layout.js" defer></script>
+    <script>
+        // Dados simulados de cenas
+        const scenes = [
+            {
+                id: 1,
+                numero: "1",
+                titulo: "Introdução",
+                localizacao: "Parque Municipal",
+                horario: "dia",
+                status: "concluida",
+                descricao: "Apresentação do tema e contextualização"
+            },
+            {
+                id: 2,
+                numero: "2",
+                titulo: "Entrevista Especialista",
+                localizacao: "Escritório",
+                horario: "dia",
+                status: "em_producao",
+                descricao: "Entrevista com biólogo sobre impacto ambiental"
+            },
+            {
+                id: 3,
+                numero: "3",
+                titulo: "Imagens Aéreas",
+                localizacao: "Reserva Ambiental",
+                horario: "amanhecer",
+                status: "nao_iniciada",
+                descricao: "Captação de imagens com drone da área preservada"
+            }
+        ];
+
+        function loadScenes() {
+            const list = document.getElementById('sceneList');
+            list.innerHTML = '';
+
+            scenes.forEach(scene => {
+                const item = document.createElement('div');
+                item.className = `scene-item ${scene.status}`;
+                item.innerHTML = `
+                    <div class="scene-header">
+                        <span class="scene-number">Cena ${scene.numero}</span>
+                        <span class="scene-status ${scene.status}"></span>
+                    </div>
+                    <div class="scene-title">${scene.titulo}</div>
+                `;
+                item.onclick = () => loadSceneContent(scene.id);
+                list.appendChild(item);
+            });
+        }
+
+        function loadSceneContent(id) {
+            const scene = scenes.find(s => s.id === id);
+            if (!scene) return;
+
+            const editor = document.getElementById('editorContent');
+            editor.innerHTML = `
+                <div class="scene-details">
+                    <h2>Cena ${scene.numero}: ${scene.titulo}</h2>
+                    <div class="scene-metadata">
+                        <p><strong>Localização:</strong> ${scene.localizacao}</p>
+                        <p><strong>Horário:</strong> ${formatTime(scene.horario)}</p>
+                    </div>
+                    <div class="scene-description">
+                        <h3>Descrição</h3>
+                        <p>${scene.descricao}</p>
+                    </div>
+                    <div class="scene-notes">
+                        <h3>Notas de Produção</h3>
+                        <textarea rows="4" placeholder="Adicione notas de produção aqui..."></textarea>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('sceneStatus').value = scene.status;
+        }
+
+        function formatTime(time) {
+            const timeMap = {
+                'dia': 'Dia',
+                'noite': 'Noite',
+                'amanhecer': 'Amanhecer',
+                'anoitecer': 'Anoitecer'
+            };
+            return timeMap[time] || time;
+        }
+
+        function openNewSceneModal() {
+            document.getElementById('newSceneModal').classList.add('show');
+        }
+
+        function closeNewSceneModal() {
+            document.getElementById('newSceneModal').classList.remove('show');
+            document.getElementById('newSceneForm').reset();
+        }
+
+        function saveNewScene() {
+            // Implementar salvamento da nova cena
+            closeNewSceneModal();
+            loadScenes();
+        }
+
+        function saveScene() {
+            // Implementar salvamento das alterações da cena
+            alert('Cena salva com sucesso!');
+        }
+
+        function exportScene() {
+            // Implementar exportação da cena
+            alert('Cena exportada com sucesso!');
+        }
+
+        function importScript() {
+            // Implementar importação de roteiro
+            alert('Funcionalidade de importação em desenvolvimento');
+        }
+
+        // Carregar cenas ao iniciar
+        document.addEventListener('DOMContentLoaded', loadScenes);
+    </script>
+</body>
+</html>
