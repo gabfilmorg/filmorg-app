@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipe - filmORG</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="base.css" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar-overlay"></div>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>filmORG</h2>
+        </div>
+        <nav class="menu">
+            <a href="dashboard.html" class="menu-item">
+                <i class="ri-dashboard-line"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="projetos.html" class="menu-item">
+                <i class="ri-movie-line"></i>
+                <span>Projetos</span>
+            </a>
+            <a href="roteiro.html" class="menu-item">
+                <i class="ri-file-text-line"></i>
+                <span>Roteiro</span>
+            </a>
+            <a href="equipe.html" class="menu-item active">
+                <i class="ri-team-line"></i>
+                <span>Equipe</span>
+            </a>
+            <a href="equipamentos.html" class="menu-item">
+                <i class="ri-camera-line"></i>
+                <span>Equipamentos</span>
+            </a>
+            <a href="analytics.html" class="menu-item">
+                <i class="ri-bar-chart-box-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="agenda.html" class="menu-item">
+                <i class="ri-calendar-line"></i>
+                <span>Agenda</span>
+            </a>
+            <a href="orcamento.html" class="menu-item">
+                <i class="ri-money-dollar-circle-line"></i>
+                <span>Orçamento</span>
+            </a>
+            <a href="configuracoes.html" class="menu-item">
+                <i class="ri-settings-line"></i>
+                <span>Configurações</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="header">
+            <button class="menu-toggle">
+                <i class="ri-menu-line"></i>
+            </button>
+            <div class="user-info">
+                <span>Olá, Usuário</span>
+                <i class="ri-user-line"></i>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="page-header">
+                <h1>Equipe</h1>
+                <button class="btn primary" onclick="openNewMemberModal()">
+                    <i class="ri-user-add-line"></i>
+                    Novo Membro
+                </button>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Função:</label>
+                    <select id="roleFilter" onchange="filterTeam()">
+                        <option value="todos">Todos</option>
+                        <option value="diretor">Diretor</option>
+                        <option value="produtor">Produtor</option>
+                        <option value="camera">Câmera</option>
+                        <option value="audio">Áudio</option>
+                        <option value="editor">Editor</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Projeto:</label>
+                    <select id="projectFilter" onchange="filterTeam()">
+                        <option value="todos">Todos</option>
+                        <option value="doc_verde">Documentário Verde</option>
+                        <option value="com_xyz">Comercial XYZ</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="team-grid" id="teamGrid">
+                <!-- Membros da equipe serão carregados dinamicamente aqui -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Novo Membro -->
+    <div class="modal" id="newMemberModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Novo Membro</h2>
+                <button class="close-btn" onclick="closeNewMemberModal()">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="newMemberForm">
+                    <div class="form-group">
+                        <label for="memberName">Nome</label>
+                        <input type="text" id="memberName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="memberRole">Função</label>
+                        <select id="memberRole" required>
+                            <option value="diretor">Diretor</option>
+                            <option value="produtor">Produtor</option>
+                            <option value="camera">Câmera</option>
+                            <option value="audio">Áudio</option>
+                            <option value="editor">Editor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="memberEmail">Email</label>
+                        <input type="email" id="memberEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="memberPhone">Telefone</label>
+                        <input type="tel" id="memberPhone">
+                    </div>
+                    <div class="form-group">
+                        <label for="memberProjects">Projetos</label>
+                        <select id="memberProjects" multiple>
+                            <option value="doc_verde">Documentário Verde</option>
+                            <option value="com_xyz">Comercial XYZ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="memberNotes">Observações</label>
+                        <textarea id="memberNotes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeNewMemberModal()">Cancelar</button>
+                <button class="btn primary" onclick="saveMember()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="layout.js" defer></script>
+    <script>
+        // Dados simulados da equipe
+        const team = [
+            {
+                id: 1,
+                nome: "Ana Silva",
+                funcao: "diretor",
+                email: "ana.silva@email.com",
+                telefone: "(11) 98765-4321",
+                projetos: ["doc_verde"],
+                observacoes: "Diretora principal do documentário"
+            },
+            {
+                id: 2,
+                nome: "Carlos Santos",
+                funcao: "camera",
+                email: "carlos.santos@email.com",
+                telefone: "(11) 98765-4322",
+                projetos: ["doc_verde", "com_xyz"],
+                observacoes: "Especialista em câmera Sony FX6"
+            },
+            {
+                id: 3,
+                nome: "Mariana Costa",
+                funcao: "produtor",
+                email: "mariana.costa@email.com",
+                telefone: "(11) 98765-4323",
+                projetos: ["com_xyz"],
+                observacoes: "Produtora executiva"
+            }
+        ];
+
+        function loadTeam() {
+            const grid = document.getElementById('teamGrid');
+            grid.innerHTML = '';
+
+            team.forEach(member => {
+                const card = document.createElement('div');
+                card.className = 'card member-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="member-avatar">
+                            <i class="ri-user-3-line"></i>
+                        </div>
+                        <div class="member-info">
+                            <h3>${member.nome}</h3>
+                            <span class="badge ${member.funcao}">${formatRole(member.funcao)}</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <p><i class="ri-mail-line"></i> ${member.email}</p>
+                        <p><i class="ri-phone-line"></i> ${member.telefone}</p>
+                        <p><i class="ri-movie-line"></i> ${formatProjects(member.projetos)}</p>
+                        <p class="member-notes">${member.observacoes}</p>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn secondary" onclick="editMember(${member.id})">
+                            <i class="ri-edit-line"></i>
+                            Editar
+                        </button>
+                        <button class="btn primary" onclick="viewMemberDetails(${member.id})">
+                            <i class="ri-eye-line"></i>
+                            Detalhes
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function formatRole(role) {
+            const roleMap = {
+                'diretor': 'Diretor',
+                'produtor': 'Produtor',
+                'camera': 'Câmera',
+                'audio': 'Áudio',
+                'editor': 'Editor'
+            };
+            return roleMap[role] || role;
+        }
+
+        function formatProjects(projects) {
+            const projectMap = {
+                'doc_verde': 'Documentário Verde',
+                'com_xyz': 'Comercial XYZ'
+            };
+            return projects.map(p => projectMap[p] || p).join(', ');
+        }
+
+        function filterTeam() {
+            // Implementar filtros
+            loadTeam();
+        }
+
+        function openNewMemberModal() {
+            document.getElementById('newMemberModal').classList.add('show');
+        }
+
+        function closeNewMemberModal() {
+            document.getElementById('newMemberModal').classList.remove('show');
+            document.getElementById('newMemberForm').reset();
+        }
+
+        function saveMember() {
+            // Implementar salvamento do membro
+            closeNewMemberModal();
+            loadTeam();
+        }
+
+        function editMember(id) {
+            // Implementar edição do membro
+            console.log('Editar membro:', id);
+        }
+
+        function viewMemberDetails(id) {
+            // Implementar visualização detalhada do membro
+            console.log('Ver detalhes do membro:', id);
+        }
+
+        // Carregar equipe ao iniciar
+        document.addEventListener('DOMContentLoaded', loadTeam);
+    </script>
+</body>
+</html>
